@@ -21,41 +21,36 @@ def welcome_message(update: Update, context: CallbackContext):
 
 
 def start_group(update: Update, context: CallbackContext):
-    try:
-        tables.User.get(tables.User.user_id == update.message.from_user.id)
-        context.bot.send_message(chat_id=update.message.chat_id, text=strings.Global.user_already_exist)
-    except DoesNotExist:
-        tables.User.create(user_id=update.message.from_user.id,
-                           group=update.message.chat_id,
-                           name=update.message.from_user.first_name)
-        welcome = strings.Start.welcome.format(update.message.chat_id)
-        context.bot.send_message(chat_id=update.message.chat_id, text=welcome, parse_mode=telegram.ParseMode.MARKDOWN)
-
-def social_pvt(update: Update, context: CallbackContext):
-    try:
-        tables.User.get(tables.User.user_id == update.message.from_user.id)
-        social(update,context)
-    except:
-        text = strings.Global.user_not_exist
-        context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
+    new, user = util.is_user_known(update,context,ask_if_new=True)
+    if not new and user:
+        context.bot.send_message(chat_id=update.message.chat_id,
+                text=strings.Global.user_already_exist,
+                parse_mode=telegram.ParseMode.MARKDOWN)
+    elif new:
+        context.bot.send_message(chat_id=update.message.chat_id,
+                text=strings.Global.welcome_message.format(user.name),
+                parse_mode=telegram.ParseMode.MARKDOWN)
 
 @MWT(timeout=60*15)
 def social(update: Update, context: CallbackContext):
-    if config["social"]:
-        text = strings.Help.social_links
-        social_message = "\n".join("[{}]({})".format(key,config["social"][key]) for key in sorted(config["social"].keys()))
+    user = util.is_user_known(update,context)
+    if user:
+        if config["social"]:
+            text = strings.Help.social_links
+            social_message = "\n".join("[{}]({})".format(key,config["social"][key]) for key in sorted(config["social"].keys()))
 
-        text += social_message
-    else:
-        text = strings.Help.no_social_links
-    print(text)
-    context.bot.send_message(chat_id=update.message.chat_id, text=emojize(text, use_aliases=True),
-                             parse_mode=telegram.ParseMode.MARKDOWN,
-                             disable_web_page_preview=True)
+            text += social_message
+        else:
+            text = strings.Help.no_social_links
+        print(text)
+        context.bot.send_message(chat_id=update.message.chat_id, text=emojize(text, use_aliases=True),
+                                 parse_mode=telegram.ParseMode.MARKDOWN,
+                                 disable_web_page_preview=True)
 
 
 @util.send_action(ChatAction.TYPING)
 def friend_list(update: Update, context: CallbackContext):
+    user = util.is_user_known(update,context)
     text = cacheable.build_friendlist(update, context)
     context.bot.send_message(chat_id=update.message.chat_id, text=emojize(text, use_aliases=True),
                              parse_mode=telegram.ParseMode.HTML,
@@ -64,6 +59,7 @@ def friend_list(update: Update, context: CallbackContext):
 
 @util.send_action(ChatAction.TYPING)
 def arena_status(update: Update, context: CallbackContext):
+    user = is_user_known(update,context)
     page = requests.get(config.statuspage, headers=config.headers)
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -85,15 +81,5 @@ def arena_status(update: Update, context: CallbackContext):
                              parse_mode=telegram.ParseMode.MARKDOWN,
                              reply_markup=reply_markup,
                              disable_web_page_preview=True)
-
-
 def register_users(update: Update, context: CallbackContext):
-    try:
-        # todo: fix none object has attribute from_user
-        tables.User.get(tables.User.user_id == update.message.from_user.id)
-    except DoesNotExist:
-        tables.User.create(user_id=update.message.from_user.id,
-                           group=update.message.chat_id,
-                           name=update.message.from_user.first_name)
-    except AttributeError:
-        pass
+    user = util.is_user_known(update,context)

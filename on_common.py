@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 
 @util.send_action(ChatAction.UPLOAD_PHOTO)
 def cards(update: Update, context: CallbackContext):
+    user = util.is_user_known(update,context)
+    if not user:
+        return
     match = re.findall(r'\[\[(.*?)\]\]', update.message.text)
     asyncio.set_event_loop(asyncio.new_event_loop())
     photos = []
@@ -105,6 +108,9 @@ def cards(update: Update, context: CallbackContext):
 
 @util.send_action(ChatAction.TYPING)
 def rulings(update: Update, context: CallbackContext):
+    user = util.is_user_known(update,context)
+    if not user:
+        return
     match = re.findall(r'\(\((.*?)\)\)', update.message.text)
     asyncio.set_event_loop(asyncio.new_event_loop())
     for index, name in enumerate(match):
@@ -131,12 +137,18 @@ def rulings(update: Update, context: CallbackContext):
 
 @util.send_action(ChatAction.TYPING)
 def check_rotation(update: Update, context: CallbackContext):
+    user = util.is_user_known(update,context)
+    if not user:
+        return
     text = cacheable.build_rotationlist()
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 @util.send_action(ChatAction.TYPING)
 def cards_banlist(update: Update, context: CallbackContext):
+    user = util.is_user_known(update,context)
+    if not user:
+        return
     text = cacheable.build_banlist()
     context.bot.send_message(chat_id=update.message.chat_id,
                              text=text,

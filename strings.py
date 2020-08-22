@@ -1,9 +1,14 @@
 class Global:
-    user_not_exist = "you don't exist in my database. Start me in your LGS group\n"
+    user_not_exist = "You don't exist in my database. /start me in the group, or forward this message to my master.\n"
     user_already_exist = "you already exist in my database"
     welcome_message = "Hello {} and welcome in our group! :smile:\n_Have fun!_"
     format_banlist = "Click here to go to the official banlist page"
+    error = "Oops, somethings went wrong... Ask my owner to fix this !"
 
+class Admin:
+    user_added = "User *{}* is now allowed to use the bot"
+    missing_arguments = "Judge ! He forgot a triggered argument !"
+    not_allowed = "Judge ! My opponent tried to cast an Admin spell without Admin mana !"
 
 class Friendlist:
     friendlist = "This is the friendlist"
@@ -26,7 +31,7 @@ class Arena:
 
 class Start:
     start_pvt = "You are successfully registered on this bot :)\n"
-    start_id = "your telegram ID is `{}` and this group id is `{}`"
+    start_id = "`{} {}`"
     welcome = "welcome, fellow planeswalker! You are now registered in my book of spells.\n" \
               "If you need anything, you can ask me help using `/help` via pvt.\n" \
               "Oh, by the way, this group ID is {}. Use it to set up RSS feeds!"
