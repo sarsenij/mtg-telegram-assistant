@@ -55,7 +55,7 @@ class Help:
                 "`/help` - get this help text. If you are an admin, it also sends their help text\n\n" \
                 "_1 parameter PVT commands. In case you set the wrong value, you can use the related command again:_\n" \
                 "`/name` - set your player name which is the name this bot will use to address you\n" \
-                "`/arena` - set your mtg:arena player name. Useful to let other players challenge you\n\n" \
+                "`/arena` - show or set your mtg:arena player name. Useful to let other players challenge you\n\n" \
                 "_Inline commands:_\n" \
                 "Whenever you summon this bot via inline, if no text is passed, it lets you choose to display your player card." \
                 "Your player card consists of your name, your DCI number, your telegram ID and your mtg:arena nickname. Be careful though! " \
