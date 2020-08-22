@@ -18,28 +18,6 @@ def start_pvt(update: Update, context: CallbackContext):
 
 
 @util.send_action(ChatAction.TYPING)
-def dci(update: Update, context: CallbackContext):
-    args = update.message.text.split(" ")
-    if len(args) == 1:
-        text = strings.Dci.dci_invalid
-    else:
-        dci = args[1]
-        try:
-            if dci.isdigit() and not dci.startswith('-'):
-                user = tables.User.get(tables.User.user_id == update.message.from_user.id)
-                user.dci = dci
-                user.save()
-                text = strings.Dci.dci_set.format(dci)
-            else:
-                text = strings.Dci.dci_invalid
-        except DoesNotExist:
-            text = strings.Global.user_not_exist
-    context.bot.send_message(chat_id=update.message.chat_id,
-                     text=text,
-                     parse_mode=telegram.ParseMode.MARKDOWN)
-
-
-@util.send_action(ChatAction.TYPING)
 def name(update: Update, context: CallbackContext):
     args = update.message.text.split(" ", 1)
     if len(args) == 1:
@@ -64,23 +42,28 @@ def name(update: Update, context: CallbackContext):
 @util.send_action(ChatAction.TYPING)
 def arena(update: Update, context: CallbackContext):
     args = update.message.text.split(" ", 1)
-    if len(args) == 1:
-        context.bot.send_message(chat_id=update.message.chat_id,
-                         text=strings.Arena.arena_invalid,
-                         parse_mode=telegram.ParseMode.MARKDOWN)
-    else:
-        arena = args[1]
-        try:
-            user = tables.User.get(tables.User.user_id == update.message.from_user.id)
+    try:
+        user = tables.User.get(tables.User.user_id == update.message.from_user.id)
+        if len(args) == 1 and not user.arena:
+            context.bot.send_message(chat_id=update.message.chat_id,
+                             text=strings.Arena.arena_invalid,
+                             parse_mode=telegram.ParseMode.MARKDOWN)
+        elif len(args) == 1:
+            context.bot.send_message(chat_id=update.message.chat_id,
+                            text=strings.Inline.player_card_text.format(user.name if not None else "",
+                                                                        user.arena if not None else ""),
+                            parse_mode=telegram.ParseMode.MARKDOWN)
+        else:
+            arena = args[1]
             user.arena = arena
             user.save()
             context.bot.send_message(chat_id=update.message.chat_id,
                              text=strings.Arena.arena_set.format(arena),
                              parse_mode=telegram.ParseMode.MARKDOWN)
-        except DoesNotExist:
-            context.bot.send_message(chat_id=update.message.chat_id,
-                             text=strings.Global.user_not_exist,
-                             parse_mode=telegram.ParseMode.MARKDOWN)
+    except DoesNotExist:
+        context.bot.send_message(chat_id=update.message.chat_id,
+                         text=strings.Global.user_not_exist,
+                         parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 @util.send_action(ChatAction.TYPING)

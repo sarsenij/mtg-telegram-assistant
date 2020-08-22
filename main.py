@@ -38,8 +38,7 @@ def error(update, context):
 def inline(update: Update, context: CallbackContext):
     try:
         user = tables.User.get(tables.User.user_id == update.inline_query.from_user.id)
-        text = strings.Inline.player_card_text.format(user.name if not None else "", user.user_id,
-                                                      user.dci if not None else "",
+        text = strings.Inline.player_card_text.format(user.name if not None else "",
                                                       user.arena if not None else "")
     except DoesNotExist:
         text = strings.Global.user_not_exist
@@ -67,8 +66,7 @@ dispatcher.add_handler(CommandHandler('banlist', callback=cards_banlist, filters
 dispatcher.add_handler(CommandHandler('social', callback=social, filters=(Filters.private | Filters.group)))
 dispatcher.add_handler(CommandHandler('friendlist', callback=friend_list, filters=Filters.group))
 dispatcher.add_handler(CommandHandler('status', callback=arena_status, filters=Filters.group))
-dispatcher.add_handler(CommandHandler('dci', callback=dci, filters=Filters.private))
-dispatcher.add_handler(CommandHandler('arena', callback=arena, filters=Filters.private))
+dispatcher.add_handler(CommandHandler('arena', callback=arena, filters=(Filters.private | Filters.group)))
 dispatcher.add_handler(CommandHandler('name', callback=name, filters=Filters.private))
 dispatcher.add_handler(CommandHandler('help', callback=help_pvt, filters=Filters.private))
 dispatcher.add_handler(MessageHandler(Filters.regex('\[\[(.*?)\]\]'), cards))
