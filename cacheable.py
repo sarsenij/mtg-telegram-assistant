@@ -76,7 +76,7 @@ def get_admin_ids(bot, chat_id=None):
 
 
 def build_friendlist(update, context):
-    query = tables.User.select().where(tables.User.arena.is_null(False))
+    query = tables.User.select().where((tables.User.arena.is_null(False)) & (tables.User.group == update.message.chat_id))
     text = " :dancers: " + strings.Friendlist.friendlist + " :dancers: \n\n"
     timeoffset = datetime.datetime.now() - datetime.timedelta(minutes=10)
     if CACHED_FRIENDLIST[0]["TTL"] < timeoffset:

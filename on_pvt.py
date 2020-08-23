@@ -78,7 +78,7 @@ def add(update: Update, context: CallbackContext):
     if update.message.from_user.id in config["master"]:
         args = update.message.text.split(" ")
         if len(args) >= 3:
-            first_name = args[2:]
+            first_name = " ".join(args[2:])
             user_id = args[1]
             try:
                 tables.User.get(tables.User.user_id == user_id)
